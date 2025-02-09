@@ -174,21 +174,39 @@ MEDIA_SESSION_STATE_OUTPUT = "com.amazon.tv.launcher\nstate=PlaybackState {state
 
 STATE_DETECTION_RULES1 = {"com.amazon.tv.launcher": ["off"]}
 STATE_DETECTION_RULES2 = {"com.amazon.tv.launcher": ["media_session_state", "off"]}
-STATE_DETECTION_RULES3 = {"com.amazon.tv.launcher": [{"standby": {"wake_lock_size": 2}}]}
-STATE_DETECTION_RULES4 = {"com.amazon.tv.launcher": [{"standby": {"wake_lock_size": 1}}, "paused"]}
+STATE_DETECTION_RULES3 = {
+    "com.amazon.tv.launcher": [{"standby": {"wake_lock_size": 2}}]
+}
+STATE_DETECTION_RULES4 = {
+    "com.amazon.tv.launcher": [{"standby": {"wake_lock_size": 1}}, "paused"]
+}
 STATE_DETECTION_RULES5 = {"com.amazon.tv.launcher": ["audio_state"]}
 
 STATE_DETECTION_RULES_INVALID1 = {123: ["media_session_state"]}
 STATE_DETECTION_RULES_INVALID2 = {"com.amazon.tv.launcher": [123]}
 STATE_DETECTION_RULES_INVALID3 = {"com.amazon.tv.launcher": ["INVALID"]}
-STATE_DETECTION_RULES_INVALID4 = {"com.amazon.tv.launcher": [{"INVALID": {"wake_lock_size": 2}}]}
+STATE_DETECTION_RULES_INVALID4 = {
+    "com.amazon.tv.launcher": [{"INVALID": {"wake_lock_size": 2}}]
+}
 STATE_DETECTION_RULES_INVALID5 = {"com.amazon.tv.launcher": [{"standby": "INVALID"}]}
-STATE_DETECTION_RULES_INVALID6 = {"com.amazon.tv.launcher": [{"standby": {"INVALID": 2}}]}
-STATE_DETECTION_RULES_INVALID7 = {"com.amazon.tv.launcher": [{"standby": {"wake_lock_size": "INVALID"}}]}
-STATE_DETECTION_RULES_INVALID8 = {"com.amazon.tv.launcher": [{"standby": {"media_session_state": "INVALID"}}]}
-STATE_DETECTION_RULES_INVALID9 = {"com.amazon.tv.launcher": [{"standby": {"audio_state": 123}}]}
-STATE_DETECTION_RULES_INVALID10 = {"com.amazon.tv.launcher": [{"standby": {"media_session_state": "INVALID"}}]}
-STATE_DETECTION_RULES_INVALID11 = {"com.amazon.tv.launcher": [{"standby": {"audio_state": 123}}]}
+STATE_DETECTION_RULES_INVALID6 = {
+    "com.amazon.tv.launcher": [{"standby": {"INVALID": 2}}]
+}
+STATE_DETECTION_RULES_INVALID7 = {
+    "com.amazon.tv.launcher": [{"standby": {"wake_lock_size": "INVALID"}}]
+}
+STATE_DETECTION_RULES_INVALID8 = {
+    "com.amazon.tv.launcher": [{"standby": {"media_session_state": "INVALID"}}]
+}
+STATE_DETECTION_RULES_INVALID9 = {
+    "com.amazon.tv.launcher": [{"standby": {"audio_state": 123}}]
+}
+STATE_DETECTION_RULES_INVALID10 = {
+    "com.amazon.tv.launcher": [{"standby": {"media_session_state": "INVALID"}}]
+}
+STATE_DETECTION_RULES_INVALID11 = {
+    "com.amazon.tv.launcher": [{"standby": {"audio_state": 123}}]
+}
 
 PNG_IMAGE = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\n\x00\x00\x00\n\x08\x06\x00\x00\x00\x8d2\xcf\xbd\x00\x00\x00\x04sBIT\x08\x08\x08\x08|\x08d\x88\x00\x00\x00\tpHYs\x00\x00\x0fa\x00\x00\x0fa\x01\xa8?\xa7i\x00\x00\x00\x0eIDAT\x18\x95c`\x18\x05\x83\x13\x00\x00\x01\x9a\x00\x01\x16\xca\xd3i\x00\x00\x00\x00IEND\xaeB`\x82"
 
@@ -198,9 +216,9 @@ class TestBaseTVSyncPython(unittest.TestCase):
     ADB_ATTR = "_adb"
 
     def setUp(self):
-        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[
+        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[
             self.PATCH_KEY
-        ]:
+        ], patchers.patch_shell("")[self.PATCH_KEY]:
             self.btv = BaseTVSync("HOST", 5555)
             self.btv.adb_connect()
 
@@ -235,7 +253,9 @@ class TestBaseTVSyncPython(unittest.TestCase):
 
     def test_keys(self):
         """Test that the key methods send the correct commands."""
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[self.PATCH_KEY]:
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[
+            self.PATCH_KEY
+        ]:
             self.btv.adb_shell("TEST")
             self.assertEqual(getattr(self.btv._adb, self.ADB_ATTR).shell_cmd, "TEST")
 
@@ -589,7 +609,9 @@ class TestBaseTVSyncPython(unittest.TestCase):
             device_properties = self.btv.get_device_properties()
             self.assertDictEqual(DEVICE_PROPERTIES_DICT3, device_properties)
 
-        with patch.object(self.btv._adb, "shell", side_effect=("manufacturer", None, "No match")):
+        with patch.object(
+            self.btv._adb, "shell", side_effect=("manufacturer", None, "No match")
+        ):
             device_properties = self.btv.get_device_properties()
             self.assertDictEqual({"ethmac": None, "wifimac": None}, device_properties)
 
@@ -607,7 +629,9 @@ class TestBaseTVSyncPython(unittest.TestCase):
             assert "Chromecast" in self.btv.device_properties.get("model", "")
             assert self.btv.DEVICE_ENUM == AndroidTVSync.DEVICE_ENUM
             self.assertEqual(self.btv.device_properties["manufacturer"], "Google")
-            self.assertEqual(self.btv._cmd_current_app(), constants.CMD_CURRENT_APP_GOOGLE_TV)
+            self.assertEqual(
+                self.btv._cmd_current_app(), constants.CMD_CURRENT_APP_GOOGLE_TV
+            )
             self.assertEqual(
                 self.btv._cmd_current_app_media_session_state(),
                 constants.CMD_CURRENT_APP_MEDIA_SESSION_STATE_GOOGLE_TV,
@@ -642,7 +666,10 @@ class TestBaseTVSyncPython(unittest.TestCase):
             # _cmd_audio_state
             self.assertEqual(self.btv._cmd_audio_state(), constants.CMD_AUDIO_STATE11)
             # _cmd_volume_set
-            self.assertEqual(self.btv._cmd_volume_set(5), constants.CMD_VOLUME_SET_COMMAND11.format(5))
+            self.assertEqual(
+                self.btv._cmd_volume_set(5),
+                constants.CMD_VOLUME_SET_COMMAND11.format(5),
+            )
             # _cmd_current_app
             self.assertEqual(self.btv._cmd_current_app(), constants.CMD_CURRENT_APP11)
             # _cmd_current_app_media_session_state
@@ -675,7 +702,10 @@ class TestBaseTVSyncPython(unittest.TestCase):
             # _cmd_audio_state
             self.assertEqual(self.btv._cmd_audio_state(), constants.CMD_AUDIO_STATE11)
             # _cmd_volume_set
-            self.assertEqual(self.btv._cmd_volume_set(5), constants.CMD_VOLUME_SET_COMMAND11.format(5))
+            self.assertEqual(
+                self.btv._cmd_volume_set(5),
+                constants.CMD_VOLUME_SET_COMMAND11.format(5),
+            )
             # _cmd_current_app
             self.assertEqual(self.btv._cmd_current_app(), constants.CMD_CURRENT_APP12)
             # _cmd_current_app_media_session_state
@@ -708,7 +738,10 @@ class TestBaseTVSyncPython(unittest.TestCase):
             # _cmd_audio_state
             self.assertEqual(self.btv._cmd_audio_state(), constants.CMD_AUDIO_STATE11)
             # _cmd_volume_set
-            self.assertEqual(self.btv._cmd_volume_set(5), constants.CMD_VOLUME_SET_COMMAND11.format(5))
+            self.assertEqual(
+                self.btv._cmd_volume_set(5),
+                constants.CMD_VOLUME_SET_COMMAND11.format(5),
+            )
             # _cmd_current_app
             self.assertEqual(self.btv._cmd_current_app(), constants.CMD_CURRENT_APP13)
             # _cmd_current_app_media_session_state
@@ -813,19 +846,29 @@ class TestBaseTVSyncPython(unittest.TestCase):
     def test_screen_on_awake_wake_lock_size(self):
         """Check that the ``screen_on_awake_wake_lock_size`` property works correctly."""
         with patchers.patch_shell(None)[self.PATCH_KEY]:
-            self.assertTupleEqual(self.btv.screen_on_awake_wake_lock_size(), (None, None, None))
+            self.assertTupleEqual(
+                self.btv.screen_on_awake_wake_lock_size(), (None, None, None)
+            )
 
         with patchers.patch_shell("")[self.PATCH_KEY]:
-            self.assertTupleEqual(self.btv.screen_on_awake_wake_lock_size(), (False, False, None))
+            self.assertTupleEqual(
+                self.btv.screen_on_awake_wake_lock_size(), (False, False, None)
+            )
 
         with patchers.patch_shell("1")[self.PATCH_KEY]:
-            self.assertTupleEqual(self.btv.screen_on_awake_wake_lock_size(), (True, None, None))
+            self.assertTupleEqual(
+                self.btv.screen_on_awake_wake_lock_size(), (True, None, None)
+            )
 
         with patchers.patch_shell("11")[self.PATCH_KEY]:
-            self.assertTupleEqual(self.btv.screen_on_awake_wake_lock_size(), (True, True, None))
+            self.assertTupleEqual(
+                self.btv.screen_on_awake_wake_lock_size(), (True, True, None)
+            )
 
         with patchers.patch_shell("11Wake Locks: size=2")[self.PATCH_KEY]:
-            self.assertTupleEqual(self.btv.screen_on_awake_wake_lock_size(), (True, True, 2))
+            self.assertTupleEqual(
+                self.btv.screen_on_awake_wake_lock_size(), (True, True, 2)
+            )
 
         with patchers.patch_shell(
             [
@@ -833,7 +876,9 @@ class TestBaseTVSyncPython(unittest.TestCase):
                 "11Wake Locks: size=2",
             ]
         )[self.PATCH_KEY]:
-            self.assertTupleEqual(self.btv.screen_on_awake_wake_lock_size(), (True, True, 2))
+            self.assertTupleEqual(
+                self.btv.screen_on_awake_wake_lock_size(), (True, True, 2)
+            )
 
     def test_state_detection_rules_validator(self):
         """Check that the ``state_detection_rules_validator`` function works correctly."""

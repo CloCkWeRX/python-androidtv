@@ -24,7 +24,9 @@ class TestAsyncClientDevice(unittest.TestCase):
     @awaiter
     async def test_async_client_device(self):
         """Test the ClientAsync class."""
-        with patch("androidtv.adb_manager.adb_manager_async.Client", patchers.ClientFakeSuccess):
+        with patch(
+            "androidtv.adb_manager.adb_manager_async.Client", patchers.ClientFakeSuccess
+        ):
             client = ClientAsync("host", "port")
 
             device = await client.device("serial")
@@ -44,7 +46,9 @@ class TestAsyncClientDevice(unittest.TestCase):
     @awaiter
     async def test_async_client_device_fail(self):
         """Test the ClientAsync class when it fails."""
-        with patch("androidtv.adb_manager.adb_manager_async.Client", patchers.ClientFakeFail):
+        with patch(
+            "androidtv.adb_manager.adb_manager_async.Client", patchers.ClientFakeFail
+        ):
             client = ClientAsync("host", "port")
 
             device = await client.device("serial")
@@ -63,27 +67,40 @@ class TestAsyncUsb(unittest.TestCase):
     @awaiter
     async def test_async_usb(self):
         """Test the AdbDeviceUsbAsync class."""
-        with patch("adb_shell.adb_device.UsbTransport.find_adb", return_value=UsbTransport("device", "setting")):
+        with patch(
+            "adb_shell.adb_device.UsbTransport.find_adb",
+            return_value=UsbTransport("device", "setting"),
+        ):
             device = AdbDeviceUsbAsync()
 
             self.assertFalse(device.available)
 
-            with patch("androidtv.adb_manager.adb_manager_async.AdbDeviceUsb.connect") as connect:
+            with patch(
+                "androidtv.adb_manager.adb_manager_async.AdbDeviceUsb.connect"
+            ) as connect:
                 await device.connect()
                 assert connect.called
 
-            with patch("androidtv.adb_manager.adb_manager_async.AdbDeviceUsb.shell") as shell:
+            with patch(
+                "androidtv.adb_manager.adb_manager_async.AdbDeviceUsb.shell"
+            ) as shell:
                 await device.shell("test")
                 assert shell.called
 
-            with patch("androidtv.adb_manager.adb_manager_async.AdbDeviceUsb.push") as push:
+            with patch(
+                "androidtv.adb_manager.adb_manager_async.AdbDeviceUsb.push"
+            ) as push:
                 await device.push("local_path", "device_path")
                 assert push.called
 
-            with patch("androidtv.adb_manager.adb_manager_async.AdbDeviceUsb.pull") as pull:
+            with patch(
+                "androidtv.adb_manager.adb_manager_async.AdbDeviceUsb.pull"
+            ) as pull:
                 await device.pull("device_path", "local_path")
                 assert pull.called
 
-            with patch("androidtv.adb_manager.adb_manager_async.AdbDeviceUsb.close") as close:
+            with patch(
+                "androidtv.adb_manager.adb_manager_async.AdbDeviceUsb.close"
+            ) as close:
                 await device.close()
                 assert close.called

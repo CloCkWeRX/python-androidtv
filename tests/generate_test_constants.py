@@ -34,7 +34,11 @@ def get_cmds():
         A dictionary where the keys are the names of the constants and the keys are their values
 
     """
-    return {var: getattr(constants, var) for var in dir(constants) if var.startswith("CMD_") and var not in EXCLUSIONS}
+    return {
+        var: getattr(constants, var)
+        for var in dir(constants)
+        if var.startswith("CMD_") and var not in EXCLUSIONS
+    }
 
 
 if __name__ == "__main__":

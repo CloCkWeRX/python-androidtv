@@ -31,13 +31,19 @@ class TestConstants(unittest.TestCase):
     @staticmethod
     def _parse_current_app(dumpsys_output):
         return TestConstants._exec(
-            'CURRENT_APP="' + dumpsys_output + '" && ' + constants.CMD_PARSE_CURRENT_APP + " && echo $CURRENT_APP"
+            'CURRENT_APP="'
+            + dumpsys_output
+            + '" && '
+            + constants.CMD_PARSE_CURRENT_APP
+            + " && echo $CURRENT_APP"
         )
 
     @staticmethod
     def _hdmi_input(dumpsys_output):
         return TestConstants._exec(
-            constants.CMD_HDMI_INPUT.replace("dumpsys activity starter", 'echo "' + dumpsys_output + '"')
+            constants.CMD_HDMI_INPUT.replace(
+                "dumpsys activity starter", 'echo "' + dumpsys_output + '"'
+            )
         )
 
     def test_apps(self):
@@ -75,7 +81,9 @@ class TestConstants(unittest.TestCase):
         )
 
         # CMD_AWAKE
-        self.assertCommand(constants.CMD_AWAKE, r"dumpsys power | grep mWakefulness | grep -q Awake")
+        self.assertCommand(
+            constants.CMD_AWAKE, r"dumpsys power | grep mWakefulness | grep -q Awake"
+        )
 
         # CMD_CURRENT_APP
         self.assertCommand(
@@ -205,13 +213,19 @@ class TestConstants(unittest.TestCase):
         )
 
         # CMD_MAC_ETH0
-        self.assertCommand(constants.CMD_MAC_ETH0, r"ip addr show eth0 | grep -m 1 ether")
+        self.assertCommand(
+            constants.CMD_MAC_ETH0, r"ip addr show eth0 | grep -m 1 ether"
+        )
 
         # CMD_MAC_WLAN0
-        self.assertCommand(constants.CMD_MAC_WLAN0, r"ip addr show wlan0 | grep -m 1 ether")
+        self.assertCommand(
+            constants.CMD_MAC_WLAN0, r"ip addr show wlan0 | grep -m 1 ether"
+        )
 
         # CMD_MANUFACTURER
-        self.assertCommand(constants.CMD_MANUFACTURER, r"getprop ro.product.manufacturer")
+        self.assertCommand(
+            constants.CMD_MANUFACTURER, r"getprop ro.product.manufacturer"
+        )
 
         # CMD_MEDIA_SESSION_STATE
         self.assertCommand(
@@ -223,7 +237,9 @@ class TestConstants(unittest.TestCase):
         self.assertCommand(constants.CMD_MODEL, r"getprop ro.product.model")
 
         # CMD_PRODUCT_ID
-        self.assertCommand(constants.CMD_PRODUCT_ID, r"getprop ro.product.vendor.device")
+        self.assertCommand(
+            constants.CMD_PRODUCT_ID, r"getprop ro.product.vendor.device"
+        )
 
         # CMD_RUNNING_APPS
         self.assertCommand(constants.CMD_RUNNING_APPS, r"ps -A | grep u0_a")
@@ -244,7 +260,9 @@ class TestConstants(unittest.TestCase):
         self.assertCommand(constants.CMD_SERIALNO, r"getprop ro.serialno")
 
         # CMD_STREAM_MUSIC
-        self.assertCommand(constants.CMD_STREAM_MUSIC, r"dumpsys audio | grep '\- STREAM_MUSIC:' -A 11")
+        self.assertCommand(
+            constants.CMD_STREAM_MUSIC, r"dumpsys audio | grep '\- STREAM_MUSIC:' -A 11"
+        )
 
         # CMD_TURN_OFF_ANDROIDTV
         self.assertCommand(
@@ -274,7 +292,9 @@ class TestConstants(unittest.TestCase):
         self.assertCommand(constants.CMD_VERSION, r"getprop ro.build.version.release")
 
         # CMD_VOLUME_SET_COMMAND
-        self.assertCommand(constants.CMD_VOLUME_SET_COMMAND, r"media volume --show --stream 3 --set {}")
+        self.assertCommand(
+            constants.CMD_VOLUME_SET_COMMAND, r"media volume --show --stream 3 --set {}"
+        )
 
         # CMD_VOLUME_SET_COMMAND11
         self.assertCommand(
@@ -283,7 +303,9 @@ class TestConstants(unittest.TestCase):
         )
 
         # CMD_WAKE_LOCK_SIZE
-        self.assertCommand(constants.CMD_WAKE_LOCK_SIZE, r"dumpsys power | grep Locks | grep 'size='")
+        self.assertCommand(
+            constants.CMD_WAKE_LOCK_SIZE, r"dumpsys power | grep Locks | grep 'size='"
+        )
 
         # Assert that the keys were checked in alphabetical order
         self.assertEqual(self._cmds, sorted(cmds.keys()))

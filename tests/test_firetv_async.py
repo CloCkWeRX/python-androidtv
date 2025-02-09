@@ -28,18 +28,23 @@ class TestFireTVAsyncPython(unittest.TestCase):
     @awaiter
     async def test_turn_on_off(self):
         """Test that the ``FireTVAsync.turn_on`` and ``FireTVAsync.turn_off`` methods work correctly."""
-        with async_patchers.patch_connect(True)[self.PATCH_KEY], async_patchers.patch_shell("")[self.PATCH_KEY]:
+        with async_patchers.patch_connect(True)[
+            self.PATCH_KEY
+        ], async_patchers.patch_shell("")[self.PATCH_KEY]:
             await self.ftv.turn_on()
             self.assertEqual(
                 getattr(self.ftv._adb, self.ADB_ATTR).shell_cmd,
                 constants.CMD_SCREEN_ON
-                + " || (input keyevent {0} && input keyevent {1})".format(constants.KEY_POWER, constants.KEY_HOME),
+                + " || (input keyevent {0} && input keyevent {1})".format(
+                    constants.KEY_POWER, constants.KEY_HOME
+                ),
             )
 
             await self.ftv.turn_off()
             self.assertEqual(
                 getattr(self.ftv._adb, self.ADB_ATTR).shell_cmd,
-                constants.CMD_SCREEN_ON + " && input keyevent {0}".format(constants.KEY_SLEEP),
+                constants.CMD_SCREEN_ON
+                + " && input keyevent {0}".format(constants.KEY_SLEEP),
             )
 
     @awaiter
@@ -53,7 +58,9 @@ class TestFireTVAsyncPython(unittest.TestCase):
             )
             self.assertDictEqual(result, {"output": "output", "retcode": "retcode"})
 
-        with async_patchers.patch_connect(True)[self.PATCH_KEY], async_patchers.patch_shell(None)[self.PATCH_KEY]:
+        with async_patchers.patch_connect(True)[
+            self.PATCH_KEY
+        ], async_patchers.patch_shell(None)[self.PATCH_KEY]:
             result = await self.ftv._send_intent("TEST", constants.INTENT_LAUNCH_FIRETV)
             self.assertEqual(
                 getattr(self.ftv._adb, self.ADB_ATTR).shell_cmd,
@@ -67,11 +74,14 @@ class TestFireTVAsyncPython(unittest.TestCase):
         with async_patchers.patch_shell("")[self.PATCH_KEY]:
             await self.ftv.launch_app("TEST")
             self.assertEqual(
-                getattr(self.ftv._adb, self.ADB_ATTR).shell_cmd, constants.CMD_LAUNCH_APP_FIRETV.format("TEST")
+                getattr(self.ftv._adb, self.ADB_ATTR).shell_cmd,
+                constants.CMD_LAUNCH_APP_FIRETV.format("TEST"),
             )
 
             await self.ftv.stop_app("TEST")
-            self.assertEqual(getattr(self.ftv._adb, self.ADB_ATTR).shell_cmd, "am force-stop TEST")
+            self.assertEqual(
+                getattr(self.ftv._adb, self.ADB_ATTR).shell_cmd, "am force-stop TEST"
+            )
 
     @awaiter
     async def test_running_apps(self):
@@ -153,7 +163,9 @@ class TestFireTVAsyncServer(TestFireTVAsyncPython):
 
     @awaiter
     async def setUp(self):
-        with async_patchers.patch_connect(True)[self.PATCH_KEY], async_patchers.patch_shell("")[self.PATCH_KEY]:
+        with async_patchers.patch_connect(True)[
+            self.PATCH_KEY
+        ], async_patchers.patch_shell("")[self.PATCH_KEY]:
             self.ftv = FireTVAsync("HOST", 5555, adb_server_ip="ADB_SERVER_IP")
             await self.ftv.adb_connect()
 

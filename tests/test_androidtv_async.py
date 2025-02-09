@@ -71,26 +71,33 @@ class TestAndroidTVAsyncPython(unittest.TestCase):
     @awaiter
     async def test_turn_on_off(self):
         """Test that the ``AndroidTVAsync.turn_on`` and ``AndroidTVAsync.turn_off`` methods work correctly."""
-        with async_patchers.patch_connect(True)[self.PATCH_KEY], async_patchers.patch_shell("")[self.PATCH_KEY]:
+        with async_patchers.patch_connect(True)[
+            self.PATCH_KEY
+        ], async_patchers.patch_shell("")[self.PATCH_KEY]:
             await self.atv.turn_on()
             self.assertEqual(
                 getattr(self.atv._adb, self.ADB_ATTR).shell_cmd,
-                constants.CMD_SCREEN_ON + " || input keyevent {0}".format(constants.KEY_POWER),
+                constants.CMD_SCREEN_ON
+                + " || input keyevent {0}".format(constants.KEY_POWER),
             )
 
             await self.atv.turn_off()
             self.assertEqual(
                 getattr(self.atv._adb, self.ADB_ATTR).shell_cmd,
-                constants.CMD_SCREEN_ON + " && input keyevent {0}".format(constants.KEY_POWER),
+                constants.CMD_SCREEN_ON
+                + " && input keyevent {0}".format(constants.KEY_POWER),
             )
 
     @awaiter
     async def test_start_intent(self):
         """Test that the ``start_intent`` method works correctly."""
-        with async_patchers.patch_connect(True)[self.PATCH_KEY], async_patchers.patch_shell("")[self.PATCH_KEY]:
+        with async_patchers.patch_connect(True)[
+            self.PATCH_KEY
+        ], async_patchers.patch_shell("")[self.PATCH_KEY]:
             await self.atv.start_intent("TEST")
             self.assertEqual(
-                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "am start -a android.intent.action.VIEW -d TEST"
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd,
+                "am start -a android.intent.action.VIEW -d TEST",
             )
 
     @awaiter
@@ -105,9 +112,13 @@ class TestAndroidTVAsyncPython(unittest.TestCase):
     async def test_stream_music_properties(self):
         """Check that the ``stream_music_properties`` method works correctly."""
         with async_patchers.patch_shell(None)[self.PATCH_KEY]:
-            with patch_calls(self.atv, self.atv._audio_output_device) as audio_output_device, patch_calls(
+            with patch_calls(
+                self.atv, self.atv._audio_output_device
+            ) as audio_output_device, patch_calls(
                 self.atv, self.atv._is_volume_muted
-            ) as is_volume_muted, patch_calls(self.atv, self.atv._volume) as volume, patch_calls(
+            ) as is_volume_muted, patch_calls(
+                self.atv, self.atv._volume
+            ) as volume, patch_calls(
                 self.atv, self.atv._volume_level
             ) as volume_level:
                 await self.atv.stream_music_properties()
@@ -116,7 +127,9 @@ class TestAndroidTVAsyncPython(unittest.TestCase):
                 assert volume.called
                 assert volume_level.called
 
-            with patch_calls(self.atv, self.atv._audio_output_device) as audio_output_device:
+            with patch_calls(
+                self.atv, self.atv._audio_output_device
+            ) as audio_output_device:
                 await self.atv.audio_output_device()
                 assert audio_output_device.called
 
@@ -146,17 +159,26 @@ class TestAndroidTVAsyncPython(unittest.TestCase):
         with async_patchers.patch_shell(STREAM_MUSIC_ON)[self.PATCH_KEY]:
             new_volume_level = await self.atv.set_volume_level(0.5)
             self.assertEqual(new_volume_level, 0.5)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "media volume --show --stream 3 --set 30")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd,
+                "media volume --show --stream 3 --set 30",
+            )
 
         with async_patchers.patch_shell("")[self.PATCH_KEY]:
             new_volume_level = await self.atv.set_volume_level(30.0 / 60)
             self.assertEqual(new_volume_level, 0.5)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "media volume --show --stream 3 --set 30")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd,
+                "media volume --show --stream 3 --set 30",
+            )
 
         with async_patchers.patch_shell("")[self.PATCH_KEY]:
             new_volume_level = await self.atv.set_volume_level(22.0 / 60)
             self.assertEqual(new_volume_level, 22.0 / 60)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "media volume --show --stream 3 --set 22")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd,
+                "media volume --show --stream 3 --set 22",
+            )
 
     @awaiter
     async def test_volume_up(self):
@@ -164,28 +186,40 @@ class TestAndroidTVAsyncPython(unittest.TestCase):
         with async_patchers.patch_shell(None)[self.PATCH_KEY]:
             new_volume_level = await self.atv.volume_up()
             self.assertIsNone(new_volume_level)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24"
+            )
 
         with async_patchers.patch_shell("")[self.PATCH_KEY]:
             new_volume_level = await self.atv.volume_up()
             self.assertIsNone(new_volume_level)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24"
+            )
 
         with async_patchers.patch_shell(STREAM_MUSIC_ON)[self.PATCH_KEY]:
             new_volume_level = await self.atv.volume_up()
             self.assertEqual(new_volume_level, 23.0 / 60)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24"
+            )
             new_volume_level = await self.atv.volume_up(23.0 / 60)
             self.assertEqual(new_volume_level, 24.0 / 60)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24"
+            )
 
         with async_patchers.patch_shell(STREAM_MUSIC_OFF)[self.PATCH_KEY]:
             new_volume_level = await self.atv.volume_up()
             self.assertEqual(new_volume_level, 21.0 / 60)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24"
+            )
             new_volume_level = await self.atv.volume_up(21.0 / 60)
             self.assertEqual(new_volume_level, 22.0 / 60)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 24"
+            )
 
     @awaiter
     async def test_volume_down(self):
@@ -193,28 +227,40 @@ class TestAndroidTVAsyncPython(unittest.TestCase):
         with async_patchers.patch_shell(None)[self.PATCH_KEY]:
             new_volume_level = await self.atv.volume_down()
             self.assertIsNone(new_volume_level)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25"
+            )
 
         with async_patchers.patch_shell("")[self.PATCH_KEY]:
             new_volume_level = await self.atv.volume_down()
             self.assertIsNone(new_volume_level)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25"
+            )
 
         with async_patchers.patch_shell(STREAM_MUSIC_ON)[self.PATCH_KEY]:
             new_volume_level = await self.atv.volume_down()
             self.assertEqual(new_volume_level, 21.0 / 60)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25"
+            )
             new_volume_level = await self.atv.volume_down(21.0 / 60)
             self.assertEqual(new_volume_level, 20.0 / 60)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25"
+            )
 
         with async_patchers.patch_shell(STREAM_MUSIC_OFF)[self.PATCH_KEY]:
             new_volume_level = await self.atv.volume_down()
             self.assertEqual(new_volume_level, 19.0 / 60)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25"
+            )
             new_volume_level = await self.atv.volume_down(19.0 / 60)
             self.assertEqual(new_volume_level, 18.0 / 60)
-            self.assertEqual(getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25")
+            self.assertEqual(
+                getattr(self.atv._adb, self.ADB_ATTR).shell_cmd, "input keyevent 25"
+            )
 
     @awaiter
     async def test_get_properties(self):
@@ -294,7 +340,9 @@ class TestAndroidTVAsyncServer(TestAndroidTVAsyncPython):
 
     @awaiter
     async def setUp(self):
-        with async_patchers.patch_connect(True)[self.PATCH_KEY], async_patchers.patch_shell("")[self.PATCH_KEY]:
+        with async_patchers.patch_connect(True)[
+            self.PATCH_KEY
+        ], async_patchers.patch_shell("")[self.PATCH_KEY]:
             self.atv = AndroidTVAsync("HOST", 5555, adb_server_ip="ADB_SERVER_IP")
             await self.atv.adb_connect()
 

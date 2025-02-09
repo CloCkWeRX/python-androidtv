@@ -104,12 +104,21 @@ def patch_connect(success):
 
     if success:
         return {
-            KEY_PYTHON: patch("{}.{}.connect".format(__name__, ADB_DEVICE_TCP_FAKE), connect_success_python),
-            KEY_SERVER: patch("androidtv.adb_manager.adb_manager_sync.Client", ClientFakeSuccess),
+            KEY_PYTHON: patch(
+                "{}.{}.connect".format(__name__, ADB_DEVICE_TCP_FAKE),
+                connect_success_python,
+            ),
+            KEY_SERVER: patch(
+                "androidtv.adb_manager.adb_manager_sync.Client", ClientFakeSuccess
+            ),
         }
     return {
-        KEY_PYTHON: patch("{}.{}.connect".format(__name__, ADB_DEVICE_TCP_FAKE), connect_fail_python),
-        KEY_SERVER: patch("androidtv.adb_manager.adb_manager_sync.Client", ClientFakeFail),
+        KEY_PYTHON: patch(
+            "{}.{}.connect".format(__name__, ADB_DEVICE_TCP_FAKE), connect_fail_python
+        ),
+        KEY_SERVER: patch(
+            "androidtv.adb_manager.adb_manager_sync.Client", ClientFakeFail
+        ),
     }
 
 
@@ -144,12 +153,20 @@ def patch_shell(response=None, error=False):
 
     if not error:
         return {
-            KEY_PYTHON: patch("{}.{}.shell".format(__name__, ADB_DEVICE_TCP_FAKE), shell_success),
-            KEY_SERVER: patch("{}.{}.shell".format(__name__, DEVICE_FAKE), shell_success),
+            KEY_PYTHON: patch(
+                "{}.{}.shell".format(__name__, ADB_DEVICE_TCP_FAKE), shell_success
+            ),
+            KEY_SERVER: patch(
+                "{}.{}.shell".format(__name__, DEVICE_FAKE), shell_success
+            ),
         }
     return {
-        KEY_PYTHON: patch("{}.{}.shell".format(__name__, ADB_DEVICE_TCP_FAKE), shell_fail_python),
-        KEY_SERVER: patch("{}.{}.shell".format(__name__, DEVICE_FAKE), shell_fail_server),
+        KEY_PYTHON: patch(
+            "{}.{}.shell".format(__name__, ADB_DEVICE_TCP_FAKE), shell_fail_python
+        ),
+        KEY_SERVER: patch(
+            "{}.{}.shell".format(__name__, DEVICE_FAKE), shell_fail_server
+        ),
     }
 
 
@@ -163,11 +180,17 @@ PATCH_PULL = {
     KEY_SERVER: patch("{}.{}.pull".format(__name__, DEVICE_FAKE)),
 }
 
-PATCH_ADB_DEVICE_TCP = patch("androidtv.adb_manager.adb_manager_sync.AdbDeviceTcp", AdbDeviceTcpFake)
+PATCH_ADB_DEVICE_TCP = patch(
+    "androidtv.adb_manager.adb_manager_sync.AdbDeviceTcp", AdbDeviceTcpFake
+)
 
-PATCH_ADB_DEVICE_USB = patch("androidtv.adb_manager.adb_manager_sync.AdbDeviceUsb", AdbDeviceTcpFake)
+PATCH_ADB_DEVICE_USB = patch(
+    "androidtv.adb_manager.adb_manager_sync.AdbDeviceUsb", AdbDeviceTcpFake
+)
 
-PATCH_ADB_SERVER_RUNTIME_ERROR = patch("{}.{}.device".format(__name__, CLIENT_FAKE_SUCCESS), side_effect=RuntimeError)
+PATCH_ADB_SERVER_RUNTIME_ERROR = patch(
+    "{}.{}.device".format(__name__, CLIENT_FAKE_SUCCESS), side_effect=RuntimeError
+)
 
 
 class CustomException(Exception):
@@ -175,8 +198,14 @@ class CustomException(Exception):
 
 
 PATCH_CONNECT_FAIL_CUSTOM_EXCEPTION = {
-    KEY_PYTHON: patch("{}.{}.connect".format(__name__, ADB_DEVICE_TCP_FAKE), side_effect=CustomException),
-    KEY_SERVER: patch("{}.{}.device".format(__name__, CLIENT_FAKE_SUCCESS), side_effect=CustomException),
+    KEY_PYTHON: patch(
+        "{}.{}.connect".format(__name__, ADB_DEVICE_TCP_FAKE),
+        side_effect=CustomException,
+    ),
+    KEY_SERVER: patch(
+        "{}.{}.device".format(__name__, CLIENT_FAKE_SUCCESS),
+        side_effect=CustomException,
+    ),
 }
 
 

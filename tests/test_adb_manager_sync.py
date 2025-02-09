@@ -10,7 +10,11 @@ except ImportError:
 sys.path.insert(0, "..")
 
 from adb_shell.transport.tcp_transport import TcpTransport
-from androidtv.adb_manager.adb_manager_sync import _acquire, ADBPythonSync, ADBServerSync
+from androidtv.adb_manager.adb_manager_sync import (
+    _acquire,
+    ADBPythonSync,
+    ADBServerSync,
+)
 from androidtv.exceptions import LockNotAcquiredException
 from . import patchers
 
@@ -84,7 +88,9 @@ class TestADBPythonSync(unittest.TestCase):
 
     def setUp(self):
         """Create an `ADBPythonSync` instance."""
-        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[self.PATCH_KEY]:
+        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[
+            self.PATCH_KEY
+        ]:
             self.adb = ADBPythonSync("HOST", 5555)
 
     def test_locked_lock(self):
@@ -129,10 +135,14 @@ class TestADBPythonSync(unittest.TestCase):
     def test_adb_shell_fail(self):
         """Test when an ADB shell command is not sent because the device is unavailable."""
         self.assertFalse(self.adb.available)
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell(None)[self.PATCH_KEY]:
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell(None)[
+            self.PATCH_KEY
+        ]:
             self.assertIsNone(self.adb.shell("TEST"))
 
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("TEST")[self.PATCH_KEY]:
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("TEST")[
+            self.PATCH_KEY
+        ]:
             self.assertTrue(self.adb.connect())
             with patch.object(self.adb, "_adb_lock", LockedLock()):
                 with self.assertRaises(LockNotAcquiredException):
@@ -143,16 +153,22 @@ class TestADBPythonSync(unittest.TestCase):
 
     def test_adb_shell_success(self):
         """Test when an ADB shell command is successfully sent."""
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("TEST")[self.PATCH_KEY]:
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("TEST")[
+            self.PATCH_KEY
+        ]:
             self.assertTrue(self.adb.connect())
             self.assertEqual(self.adb.shell("TEST"), "TEST")
 
     def test_adb_shell_fail_lock_released(self):
         """Test that the ADB lock gets released when an exception is raised."""
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("TEST")[self.PATCH_KEY]:
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("TEST")[
+            self.PATCH_KEY
+        ]:
             self.assertTrue(self.adb.connect())
 
-        with patchers.patch_shell("TEST", error=True)[self.PATCH_KEY], patch.object(self.adb, "_adb_lock", FakeLock()):
+        with patchers.patch_shell("TEST", error=True)[self.PATCH_KEY], patch.object(
+            self.adb, "_adb_lock", FakeLock()
+        ):
             with patch("{}.FakeLock.release".format(__name__)) as release:
                 with self.assertRaises(Exception):
                     self.adb.shell("TEST")
@@ -160,11 +176,15 @@ class TestADBPythonSync(unittest.TestCase):
 
     def test_adb_shell_lock_not_acquired_not_released(self):
         """Test that the lock does not get released if it is not acquired."""
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("TEST")[self.PATCH_KEY]:
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("TEST")[
+            self.PATCH_KEY
+        ]:
             self.assertTrue(self.adb.connect())
             self.assertEqual(self.adb.shell("TEST"), "TEST")
 
-        with patchers.patch_shell("TEST")[self.PATCH_KEY], patch.object(self.adb, "_adb_lock", LockedLock()):
+        with patchers.patch_shell("TEST")[self.PATCH_KEY], patch.object(
+            self.adb, "_adb_lock", LockedLock()
+        ):
             with patch("{}.LockedLock.release".format(__name__)) as release:
                 with self.assertRaises(LockNotAcquiredException):
                     self.adb.shell("TEST")
@@ -227,11 +247,15 @@ class TestADBPythonSync(unittest.TestCase):
 
     def test_adb_screencap_lock_not_acquired(self):
         """Test when an ADB screencap command fails because the ADB lock could not be acquired."""
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("TEST")[self.PATCH_KEY]:
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("TEST")[
+            self.PATCH_KEY
+        ]:
             self.assertTrue(self.adb.connect())
             self.assertEqual(self.adb.shell("TEST"), "TEST")
 
-        with patchers.patch_shell(PNG_IMAGE)[self.PATCH_KEY], patch.object(self.adb, "_adb_lock", LockedLock()):
+        with patchers.patch_shell(PNG_IMAGE)[self.PATCH_KEY], patch.object(
+            self.adb, "_adb_lock", LockedLock()
+        ):
             with patch("{}.LockedLock.release".format(__name__)) as release:
                 with self.assertRaises(LockNotAcquiredException):
                     self.adb.screencap()
@@ -240,7 +264,9 @@ class TestADBPythonSync(unittest.TestCase):
 
     def test_adb_screencap_success(self):
         """Test the `screencap` method."""
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell(PNG_IMAGE)[self.PATCH_KEY]:
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell(
+            PNG_IMAGE
+        )[self.PATCH_KEY]:
             self.assertTrue(self.adb.connect())
 
             if isinstance(self.adb, ADBPythonSync):
@@ -250,7 +276,9 @@ class TestADBPythonSync(unittest.TestCase):
                     self.assertEqual(self.adb.screencap(), PNG_IMAGE)
 
             else:
-                with patch.object(self.adb._adb_device, "screencap", return_value=PNG_IMAGE):
+                with patch.object(
+                    self.adb._adb_device, "screencap", return_value=PNG_IMAGE
+                ):
                     self.assertEqual(self.adb.screencap(), PNG_IMAGE)
 
 
@@ -260,7 +288,9 @@ class TestADBPythonUsbSync(TestADBPythonSync):
     def setUp(self):
         """Create an `ADBPythonSync` instance with a USB connection."""
         # Patch the real `AdbDeviceUsb` with the fake `AdbDeviceTcpFake`
-        with patchers.PATCH_ADB_DEVICE_USB, patchers.patch_connect(True)[self.PATCH_KEY]:
+        with patchers.PATCH_ADB_DEVICE_USB, patchers.patch_connect(True)[
+            self.PATCH_KEY
+        ]:
             self.adb = ADBPythonSync("", 5555)
 
 
@@ -290,14 +320,19 @@ class TestADBPythonSyncWithAuthentication(unittest.TestCase):
 
     def setUp(self):
         """Create an `ADBPythonSync` instance."""
-        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[self.PATCH_KEY]:
+        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[
+            self.PATCH_KEY
+        ]:
             self.adb = ADBPythonSync("HOST", 5555, "adbkey")
 
     def test_connect_success_with_priv_key(self):
         """Test when the connect attempt is successful when using a private key."""
         with patchers.patch_connect(True)[self.PATCH_KEY], patch(
             "androidtv.adb_manager.adb_manager_sync.open", open_priv
-        ), patch("androidtv.adb_manager.adb_manager_sync.PythonRSASigner", return_value="TEST"):
+        ), patch(
+            "androidtv.adb_manager.adb_manager_sync.PythonRSASigner",
+            return_value="TEST",
+        ):
             self.assertTrue(self.adb.connect())
             self.assertTrue(self.adb.available)
 
@@ -311,7 +346,9 @@ class TestADBPythonSyncWithAuthentication(unittest.TestCase):
         """Test when the connect attempt is successful when using private and public keys."""
         with patchers.patch_connect(True)[self.PATCH_KEY], patch(
             "androidtv.adb_manager.adb_manager_sync.open", open_priv_pub
-        ), patch("androidtv.adb_manager.adb_manager_sync.PythonRSASigner", return_value=None):
+        ), patch(
+            "androidtv.adb_manager.adb_manager_sync.PythonRSASigner", return_value=None
+        ):
             self.assertTrue(self.adb.connect())
             self.assertTrue(self.adb.available)
 
@@ -323,7 +360,9 @@ class TestADBPythonSyncClose(unittest.TestCase):
 
     def test_close(self):
         """Test the `ADBPythonSync.close` method."""
-        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[self.PATCH_KEY]:
+        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[
+            self.PATCH_KEY
+        ]:
             self.adb = ADBPythonSync("HOST", 5555)
 
         with patchers.patch_connect(True)[self.PATCH_KEY]:

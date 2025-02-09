@@ -10,9 +10,22 @@ except ImportError:
 
 sys.path.insert(0, "..")
 
-from adb_shell.exceptions import InvalidChecksumError, InvalidCommandError, InvalidResponseError, TcpTimeoutException
+from adb_shell.exceptions import (
+    InvalidChecksumError,
+    InvalidCommandError,
+    InvalidResponseError,
+    TcpTimeoutException,
+)
 from androidtv import setup
-from androidtv.constants import APPS, KEYS, STATE_IDLE, STATE_OFF, STATE_PAUSED, STATE_PLAYING, STATE_STANDBY
+from androidtv.constants import (
+    APPS,
+    KEYS,
+    STATE_IDLE,
+    STATE_OFF,
+    STATE_PAUSED,
+    STATE_PLAYING,
+    STATE_STANDBY,
+)
 from androidtv.exceptions import LockNotAcquiredException
 
 from . import patchers
@@ -90,13 +103,17 @@ def adb_decorator(override_available=False):
 class ADBDevice(MediaPlayerDevice):
     """Representation of an Android TV or Fire TV device."""
 
-    def __init__(self, aftv, name, apps, get_sources, turn_on_command, turn_off_command):
+    def __init__(
+        self, aftv, name, apps, get_sources, turn_on_command, turn_off_command
+    ):
         """Initialize the Android TV / Fire TV device."""
         self.aftv = aftv
         self._name = name
         self._app_id_to_name = APPS.copy()
         self._app_id_to_name.update(apps)
-        self._app_name_to_id = {value: key for key, value in self._app_id_to_name.items()}
+        self._app_name_to_id = {
+            value: key for key, value in self._app_id_to_name.items()
+        }
         self._get_sources = get_sources
         self._keys = KEYS
 
@@ -272,9 +289,13 @@ class ADBDevice(MediaPlayerDevice):
 class AndroidTVDevice(ADBDevice):
     """Representation of an Android TV device."""
 
-    def __init__(self, aftv, name, apps, get_sources, turn_on_command, turn_off_command):
+    def __init__(
+        self, aftv, name, apps, get_sources, turn_on_command, turn_off_command
+    ):
         """Initialize the Android TV device."""
-        super().__init__(aftv, name, apps, get_sources, turn_on_command, turn_off_command)
+        super().__init__(
+            aftv, name, apps, get_sources, turn_on_command, turn_off_command
+        )
 
         self._is_volume_muted = None
         self._volume_level = None
@@ -301,16 +322,24 @@ class AndroidTVDevice(ADBDevice):
             return
 
         # Get the updated state and attributes.
-        (state, self._current_app, running_apps, _, self._is_volume_muted, self._volume_level, _) = self.aftv.update(
-            self._get_sources
-        )
+        (
+            state,
+            self._current_app,
+            running_apps,
+            _,
+            self._is_volume_muted,
+            self._volume_level,
+            _,
+        ) = self.aftv.update(self._get_sources)
 
         self._state = ANDROIDTV_STATES.get(state)
         if self._state is None:
             self._available = False
 
         if running_apps:
-            self._sources = [self._app_id_to_name.get(app_id, app_id) for app_id in running_apps]
+            self._sources = [
+                self._app_id_to_name.get(app_id, app_id) for app_id in running_apps
+            ]
         else:
             self._sources = None
 
@@ -382,7 +411,9 @@ class FireTVDevice(ADBDevice):
             self._available = False
 
         if running_apps:
-            self._sources = [self._app_id_to_name.get(app_id, app_id) for app_id in running_apps]
+            self._sources = [
+                self._app_id_to_name.get(app_id, app_id) for app_id in running_apps
+            ]
         else:
             self._sources = None
 
@@ -412,9 +443,9 @@ class TestAndroidTVPythonImplementation(unittest.TestCase):
 
     def setUp(self):
         """Set up an `AndroidTVDevice` media player."""
-        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[
+        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[
             self.PATCH_KEY
-        ]:
+        ], patchers.patch_shell("")[self.PATCH_KEY]:
             aftv = setup("HOST", 5555, device_class="androidtv")
             self.aftv = AndroidTVDevice(aftv, "Fake Android TV", {}, True, None, None)
 
@@ -427,7 +458,9 @@ class TestAndroidTVPythonImplementation(unittest.TestCase):
         https://developers.home-assistant.io/docs/en/integration_quality_scale_index.html
         """
         with self.assertLogs(level=logging.WARNING) as logs:
-            with patchers.patch_connect(False)[self.PATCH_KEY], patchers.patch_shell(error=True)[self.PATCH_KEY]:
+            with patchers.patch_connect(False)[self.PATCH_KEY], patchers.patch_shell(
+                error=True
+            )[self.PATCH_KEY]:
                 for _ in range(5):
                     self.aftv.update()
                     self.assertFalse(self.aftv.available)
@@ -438,7 +471,9 @@ class TestAndroidTVPythonImplementation(unittest.TestCase):
         assert logs.output[1].startswith("WARNING")
 
         with self.assertLogs(level=logging.DEBUG) as logs:
-            with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[self.PATCH_KEY]:
+            with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[
+                self.PATCH_KEY
+            ]:
                 # Update 1 will reconnect
                 self.aftv.update()
                 self.assertTrue(self.aftv.available)
@@ -449,7 +484,9 @@ class TestAndroidTVPythonImplementation(unittest.TestCase):
                 self.assertIsNotNone(self.aftv.state)
 
         assert (
-            "ADB connection to {}:{} successfully established".format(self.aftv.aftv.host, self.aftv.aftv.port)
+            "ADB connection to {}:{} successfully established".format(
+                self.aftv.aftv.host, self.aftv.aftv.port
+            )
             in logs.output[0]
         )
 
@@ -463,7 +500,9 @@ class TestAndroidTVPythonImplementation(unittest.TestCase):
             self.assertFalse(self.aftv.available)
             self.assertIsNone(self.aftv.state)
 
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[self.PATCH_KEY]:
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[
+            self.PATCH_KEY
+        ]:
             # Update 1 will reconnect
             self.aftv.update()
             self.assertTrue(self.aftv.available)
@@ -482,8 +521,12 @@ class TestAndroidTVServerImplementation(unittest.TestCase):
 
     def setUp(self):
         """Set up an `AndroidTVDevice` media player."""
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[self.PATCH_KEY]:
-            aftv = setup("HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="androidtv")
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[
+            self.PATCH_KEY
+        ]:
+            aftv = setup(
+                "HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="androidtv"
+            )
             self.aftv = AndroidTVDevice(aftv, "Fake Android TV", {}, True, None, None)
 
     def test_reconnect(self):
@@ -495,7 +538,9 @@ class TestAndroidTVServerImplementation(unittest.TestCase):
         https://developers.home-assistant.io/docs/en/integration_quality_scale_index.html
         """
         with self.assertLogs(level=logging.WARNING) as logs:
-            with patchers.patch_connect(False)[self.PATCH_KEY], patchers.patch_shell(error=True)[self.PATCH_KEY]:
+            with patchers.patch_connect(False)[self.PATCH_KEY], patchers.patch_shell(
+                error=True
+            )[self.PATCH_KEY]:
                 for _ in range(5):
                     self.aftv.update()
                     self.assertFalse(self.aftv.available)
@@ -506,14 +551,19 @@ class TestAndroidTVServerImplementation(unittest.TestCase):
         assert logs.output[1].startswith("WARNING")
 
         with self.assertLogs(level=logging.DEBUG) as logs:
-            with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[self.PATCH_KEY]:
+            with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[
+                self.PATCH_KEY
+            ]:
                 self.aftv.update()
                 self.assertTrue(self.aftv.available)
                 self.assertIsNotNone(self.aftv.state)
 
         assert (
             "ADB connection to {}:{} via ADB server {}:{} successfully established".format(
-                self.aftv.aftv.host, self.aftv.aftv.port, self.aftv.aftv.adb_server_ip, self.aftv.aftv.adb_server_port
+                self.aftv.aftv.host,
+                self.aftv.aftv.port,
+                self.aftv.aftv.adb_server_ip,
+                self.aftv.aftv.adb_server_port,
             )
             in logs.output[0]
         )
@@ -528,7 +578,9 @@ class TestAndroidTVServerImplementation(unittest.TestCase):
             self.assertFalse(self.aftv.available)
             self.assertIsNone(self.aftv.state)
 
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[self.PATCH_KEY]:
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[
+            self.PATCH_KEY
+        ]:
             self.aftv.update()
             self.assertTrue(self.aftv.available)
             self.assertIsNotNone(self.aftv.state)
@@ -540,9 +592,9 @@ class TestFireTVPythonImplementation(TestAndroidTVPythonImplementation):
 
     def setUp(self):
         """Set up a `FireTVDevice` media player."""
-        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[
+        with patchers.PATCH_ADB_DEVICE_TCP, patchers.patch_connect(True)[
             self.PATCH_KEY
-        ]:
+        ], patchers.patch_shell("")[self.PATCH_KEY]:
             aftv = setup("HOST", 5555, device_class="firetv")
             self.aftv = FireTVDevice(aftv, "Fake Fire TV", {}, True, None, None)
 
@@ -553,8 +605,12 @@ class TestFireTVServerImplementation(TestAndroidTVServerImplementation):
 
     def setUp(self):
         """Set up a `FireTVDevice` media player."""
-        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[self.PATCH_KEY]:
-            aftv = setup("HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="firetv")
+        with patchers.patch_connect(True)[self.PATCH_KEY], patchers.patch_shell("")[
+            self.PATCH_KEY
+        ]:
+            aftv = setup(
+                "HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="firetv"
+            )
             self.aftv = FireTVDevice(aftv, "Fake Fire TV", {}, True, None, None)
 
 
@@ -568,11 +624,17 @@ class TestADBCommandAndFileSync(unittest.TestCase):
         command = "test command"
         response = "test response"
 
-        with patchers.patch_connect(True)[patch_key], patchers.patch_shell("")[patch_key]:
-            aftv = setup("HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="androidtv")
+        with patchers.patch_connect(True)[patch_key], patchers.patch_shell("")[
+            patch_key
+        ]:
+            aftv = setup(
+                "HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="androidtv"
+            )
             self.aftv = AndroidTVDevice(aftv, "Fake Android TV", {}, True, None, None)
 
-        with patch("androidtv.basetv.basetv_sync.BaseTVSync.adb_shell", return_value=response) as patch_shell:
+        with patch(
+            "androidtv.basetv.basetv_sync.BaseTVSync.adb_shell", return_value=response
+        ) as patch_shell:
             self.aftv.adb_command(command)
 
             patch_shell.assert_called_with(command)
@@ -584,14 +646,22 @@ class TestADBCommandAndFileSync(unittest.TestCase):
         command = "HOME"
         response = None
 
-        with patchers.patch_connect(True)[patch_key], patchers.patch_shell("")[patch_key]:
-            aftv = setup("HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="androidtv")
+        with patchers.patch_connect(True)[patch_key], patchers.patch_shell("")[
+            patch_key
+        ]:
+            aftv = setup(
+                "HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="androidtv"
+            )
             self.aftv = AndroidTVDevice(aftv, "Fake Android TV", {}, True, None, None)
 
-        with patch("androidtv.basetv.basetv_sync.BaseTVSync.adb_shell", return_value=response) as patch_shell:
+        with patch(
+            "androidtv.basetv.basetv_sync.BaseTVSync.adb_shell", return_value=response
+        ) as patch_shell:
             self.aftv.adb_command(command)
 
-            patch_shell.assert_called_with("input keyevent {}".format(self.aftv._keys[command]))
+            patch_shell.assert_called_with(
+                "input keyevent {}".format(self.aftv._keys[command])
+            )
             assert self.aftv._adb_response is None
 
     def test_adb_command_get_properties(self):
@@ -600,12 +670,17 @@ class TestADBCommandAndFileSync(unittest.TestCase):
         command = "GET_PROPERTIES"
         response = {"key": "value"}
 
-        with patchers.patch_connect(True)[patch_key], patchers.patch_shell("")[patch_key]:
-            aftv = setup("HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="androidtv")
+        with patchers.patch_connect(True)[patch_key], patchers.patch_shell("")[
+            patch_key
+        ]:
+            aftv = setup(
+                "HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="androidtv"
+            )
             self.aftv = AndroidTVDevice(aftv, "Fake Android TV", {}, True, None, None)
 
         with patch(
-            "androidtv.androidtv.androidtv_sync.AndroidTVSync.get_properties_dict", return_value=response
+            "androidtv.androidtv.androidtv_sync.AndroidTVSync.get_properties_dict",
+            return_value=response,
         ) as patch_get_props:
             self.aftv.adb_command(command)
 
@@ -616,15 +691,22 @@ class TestADBCommandAndFileSync(unittest.TestCase):
         """Test that the state does not get updated when a `LockNotAcquiredException` is raised."""
         patch_key = "server"
 
-        with patchers.patch_connect(True)[patch_key], patchers.patch_shell("")[patch_key]:
-            aftv = setup("HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="androidtv")
+        with patchers.patch_connect(True)[patch_key], patchers.patch_shell("")[
+            patch_key
+        ]:
+            aftv = setup(
+                "HOST", 5555, adb_server_ip="ADB_SERVER_IP", device_class="androidtv"
+            )
             self.aftv = AndroidTVDevice(aftv, "Fake Android TV", {}, True, None, None)
 
         with patchers.patch_shell("")[patch_key]:
             self.aftv.update()
             assert self.aftv.state == STATE_OFF
 
-        with patch("androidtv.androidtv.androidtv_sync.AndroidTVSync.update", side_effect=LockNotAcquiredException):
+        with patch(
+            "androidtv.androidtv.androidtv_sync.AndroidTVSync.update",
+            side_effect=LockNotAcquiredException,
+        ):
             with patchers.patch_shell("1")[patch_key]:
                 self.aftv.update()
                 assert self.aftv.state == STATE_OFF
