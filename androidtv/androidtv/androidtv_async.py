@@ -43,7 +43,16 @@ class AndroidTVAsync(BaseTVAsync, BaseAndroidTV):
         state_detection_rules=None,
         signer=None,
     ):  # pylint: disable=super-init-not-called
-        BaseTVAsync.__init__(self, host, port, adbkey, adb_server_ip, adb_server_port, state_detection_rules, signer)
+        BaseTVAsync.__init__(
+            self,
+            host,
+            port,
+            adbkey,
+            adb_server_ip,
+            adb_server_port,
+            state_detection_rules,
+            signer,
+        )
 
     @classmethod
     def from_base(cls, base_tv):
@@ -179,11 +188,25 @@ class AndroidTVAsync(BaseTVAsync, BaseAndroidTV):
         screen_on, awake, wake_lock_size = await self.screen_on_awake_wake_lock_size()
 
         if lazy and not (screen_on and awake):
-            return screen_on, awake, None, wake_lock_size, None, None, None, None, None, None, None
+            return (
+                screen_on,
+                awake,
+                None,
+                wake_lock_size,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+            )
 
         audio_state = await self.audio_state()
         current_app, media_session_state = await self.current_app_media_session_state()
-        audio_output_device, is_volume_muted, volume, _ = await self.stream_music_properties()
+        audio_output_device, is_volume_muted, volume, _ = (
+            await self.stream_music_properties()
+        )
 
         if get_running_apps:
             running_apps = await self.running_apps()

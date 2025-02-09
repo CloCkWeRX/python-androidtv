@@ -60,15 +60,39 @@ def setup(
 
     """
     if device_class == "androidtv":
-        atv = AndroidTVSync(host, port, adbkey, adb_server_ip, adb_server_port, state_detection_rules, signer)
-        atv.adb_connect(log_errors=log_errors, auth_timeout_s=auth_timeout_s, transport_timeout_s=transport_timeout_s)
+        atv = AndroidTVSync(
+            host,
+            port,
+            adbkey,
+            adb_server_ip,
+            adb_server_port,
+            state_detection_rules,
+            signer,
+        )
+        atv.adb_connect(
+            log_errors=log_errors,
+            auth_timeout_s=auth_timeout_s,
+            transport_timeout_s=transport_timeout_s,
+        )
         atv.get_device_properties()
         atv.get_installed_apps()
         return atv
 
     if device_class == "firetv":
-        ftv = FireTVSync(host, port, adbkey, adb_server_ip, adb_server_port, state_detection_rules, signer)
-        ftv.adb_connect(log_errors=log_errors, auth_timeout_s=auth_timeout_s, transport_timeout_s=transport_timeout_s)
+        ftv = FireTVSync(
+            host,
+            port,
+            adbkey,
+            adb_server_ip,
+            adb_server_port,
+            state_detection_rules,
+            signer,
+        )
+        ftv.adb_connect(
+            log_errors=log_errors,
+            auth_timeout_s=auth_timeout_s,
+            transport_timeout_s=transport_timeout_s,
+        )
         ftv.get_device_properties()
         ftv.get_installed_apps()
         return ftv
@@ -76,10 +100,22 @@ def setup(
     if device_class != "auto":
         raise ValueError("`device_class` must be 'androidtv', 'firetv', or 'auto'.")
 
-    aftv = BaseTVSync(host, port, adbkey, adb_server_ip, adb_server_port, state_detection_rules, signer)
+    aftv = BaseTVSync(
+        host,
+        port,
+        adbkey,
+        adb_server_ip,
+        adb_server_port,
+        state_detection_rules,
+        signer,
+    )
 
     # establish the ADB connection
-    aftv.adb_connect(log_errors=log_errors, auth_timeout_s=auth_timeout_s, transport_timeout_s=transport_timeout_s)
+    aftv.adb_connect(
+        log_errors=log_errors,
+        auth_timeout_s=auth_timeout_s,
+        transport_timeout_s=transport_timeout_s,
+    )
 
     # get device properties
     aftv.device_properties = aftv.get_device_properties()

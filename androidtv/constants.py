@@ -87,14 +87,18 @@ CMD_AWAKE = "dumpsys power | grep mWakefulness | grep -q Awake"
 CMD_PARSE_CURRENT_APP = "CURRENT_APP=${CURRENT_APP#*ActivityRecord{* * } && CURRENT_APP=${CURRENT_APP#*{* * } && CURRENT_APP=${CURRENT_APP%%/*} && CURRENT_APP=${CURRENT_APP%\\}*}"
 
 #: Parse current application for an Android 11+ device
-CMD_PARSE_CURRENT_APP11 = "CURRENT_APP=${CURRENT_APP%%/*} && CURRENT_APP=${CURRENT_APP##* }"
+CMD_PARSE_CURRENT_APP11 = (
+    "CURRENT_APP=${CURRENT_APP%%/*} && CURRENT_APP=${CURRENT_APP##* }"
+)
 #: Assign focused application identifier to ``CURRENT_APP`` variable
 CMD_DEFINE_CURRENT_APP_VARIABLE = (
-    "CURRENT_APP=$(dumpsys window windows | grep -E 'mCurrentFocus|mFocusedApp') && " + CMD_PARSE_CURRENT_APP
+    "CURRENT_APP=$(dumpsys window windows | grep -E 'mCurrentFocus|mFocusedApp') && "
+    + CMD_PARSE_CURRENT_APP
 )
 #: Assign focused application identifier to ``CURRENT_APP`` variable for an Android 11 device
 CMD_DEFINE_CURRENT_APP_VARIABLE11 = (
-    "CURRENT_APP=$(dumpsys window windows | grep -E 'mInputMethod(Input)?Target') && " + CMD_PARSE_CURRENT_APP11
+    "CURRENT_APP=$(dumpsys window windows | grep -E 'mInputMethod(Input)?Target') && "
+    + CMD_PARSE_CURRENT_APP11
 )
 
 #: Assign focused application identifier to ``CURRENT_APP`` variable for an Android 12 device
@@ -130,16 +134,21 @@ CMD_DEFINE_CURRENT_APP_VARIABLE_ASKEY_STI6130 = (
 )
 
 #: Output identifier for current/focused application (for a Askey STI6130)
-CMD_CURRENT_APP_ASKEY_STI6130 = CMD_DEFINE_CURRENT_APP_VARIABLE_ASKEY_STI6130 + " && echo $CURRENT_APP "
+CMD_CURRENT_APP_ASKEY_STI6130 = (
+    CMD_DEFINE_CURRENT_APP_VARIABLE_ASKEY_STI6130 + " && echo $CURRENT_APP "
+)
 
 
 #: Assign focused application identifier to ``CURRENT_APP`` variable (for a Google TV device)
 CMD_DEFINE_CURRENT_APP_VARIABLE_GOOGLE_TV = (
-    "CURRENT_APP=$(dumpsys activity a . | grep mResumedActivity) && " + CMD_PARSE_CURRENT_APP
+    "CURRENT_APP=$(dumpsys activity a . | grep mResumedActivity) && "
+    + CMD_PARSE_CURRENT_APP
 )
 
 #: Output identifier for current/focused application (for a Google TV device)
-CMD_CURRENT_APP_GOOGLE_TV = CMD_DEFINE_CURRENT_APP_VARIABLE_GOOGLE_TV + " && echo $CURRENT_APP"
+CMD_CURRENT_APP_GOOGLE_TV = (
+    CMD_DEFINE_CURRENT_APP_VARIABLE_GOOGLE_TV + " && echo $CURRENT_APP"
+)
 
 #: set volume
 CMD_VOLUME_SET_COMMAND = "media volume --show --stream 3 --set {}"
@@ -148,9 +157,7 @@ CMD_VOLUME_SET_COMMAND = "media volume --show --stream 3 --set {}"
 CMD_VOLUME_SET_COMMAND11 = "cmd media_session volume --show --stream 3 --set {}"
 
 #: Get the HDMI input
-CMD_HDMI_INPUT = (
-    "dumpsys activity starter | grep -E -o '(ExternalTv|HDMI)InputService/HW[0-9]' -m 1 | grep -o 'HW[0-9]'"
-)
+CMD_HDMI_INPUT = "dumpsys activity starter | grep -E -o '(ExternalTv|HDMI)InputService/HW[0-9]' -m 1 | grep -o 'HW[0-9]'"
 
 #: Get the HDMI input for an Android 11 device
 CMD_HDMI_INPUT11 = (
@@ -160,42 +167,58 @@ CMD_HDMI_INPUT11 = (
 
 #: Launch an app if it is not already the current app (assumes the variable ``CURRENT_APP`` has already been set)
 CMD_LAUNCH_APP_CONDITION = (
-    "if [ $CURRENT_APP != '{0}' ]; then monkey -p {0} -c " + INTENT_LAUNCH + " --pct-syskeys 0 1; fi"
+    "if [ $CURRENT_APP != '{0}' ]; then monkey -p {0} -c "
+    + INTENT_LAUNCH
+    + " --pct-syskeys 0 1; fi"
 )
 
 #: Launch an app if it is not already the current app (assumes the variable ``CURRENT_APP`` has already been set) on a Fire TV
 CMD_LAUNCH_APP_CONDITION_FIRETV = (
-    "if [ $CURRENT_APP != '{0}' ]; then monkey -p {0} -c " + INTENT_LAUNCH_FIRETV + " --pct-syskeys 0 1; fi"
+    "if [ $CURRENT_APP != '{0}' ]; then monkey -p {0} -c "
+    + INTENT_LAUNCH_FIRETV
+    + " --pct-syskeys 0 1; fi"
 )
 
 #: Launch an app if it is not already the current app
 CMD_LAUNCH_APP = (
-    CMD_DEFINE_CURRENT_APP_VARIABLE.replace("{", "{{").replace("}", "}}") + " && " + CMD_LAUNCH_APP_CONDITION
+    CMD_DEFINE_CURRENT_APP_VARIABLE.replace("{", "{{").replace("}", "}}")
+    + " && "
+    + CMD_LAUNCH_APP_CONDITION
 )
 
 #: Launch an app if it is not already the current app on an Android 11 device
 CMD_LAUNCH_APP11 = (
-    CMD_DEFINE_CURRENT_APP_VARIABLE11.replace("{", "{{").replace("}", "}}") + " && " + CMD_LAUNCH_APP_CONDITION
+    CMD_DEFINE_CURRENT_APP_VARIABLE11.replace("{", "{{").replace("}", "}}")
+    + " && "
+    + CMD_LAUNCH_APP_CONDITION
 )
 
 #: Launch an app if it is not already the current app on an Android 12 device
 CMD_LAUNCH_APP12 = (
-    CMD_DEFINE_CURRENT_APP_VARIABLE12.replace("{", "{{").replace("}", "}}") + " && " + CMD_LAUNCH_APP_CONDITION
+    CMD_DEFINE_CURRENT_APP_VARIABLE12.replace("{", "{{").replace("}", "}}")
+    + " && "
+    + CMD_LAUNCH_APP_CONDITION
 )
 
 #: Launch an app if it is not already the current app on an Android 11 device
 CMD_LAUNCH_APP13 = (
-    CMD_DEFINE_CURRENT_APP_VARIABLE13.replace("{", "{{").replace("}", "}}") + " && " + CMD_LAUNCH_APP_CONDITION
+    CMD_DEFINE_CURRENT_APP_VARIABLE13.replace("{", "{{").replace("}", "}}")
+    + " && "
+    + CMD_LAUNCH_APP_CONDITION
 )
 
 #: Launch an app on a Fire TV device
 CMD_LAUNCH_APP_FIRETV = (
-    CMD_DEFINE_CURRENT_APP_VARIABLE.replace("{", "{{").replace("}", "}}") + " && " + CMD_LAUNCH_APP_CONDITION_FIRETV
+    CMD_DEFINE_CURRENT_APP_VARIABLE.replace("{", "{{").replace("}", "}}")
+    + " && "
+    + CMD_LAUNCH_APP_CONDITION_FIRETV
 )
 
 #: Launch an app on a Google TV device
 CMD_LAUNCH_APP_GOOGLE_TV = (
-    CMD_DEFINE_CURRENT_APP_VARIABLE_GOOGLE_TV.replace("{", "{{").replace("}", "}}") + " && " + CMD_LAUNCH_APP_CONDITION
+    CMD_DEFINE_CURRENT_APP_VARIABLE_GOOGLE_TV.replace("{", "{{").replace("}", "}}")
+    + " && "
+    + CMD_LAUNCH_APP_CONDITION
 )
 
 #: Get the state from ``dumpsys media_session``; this assumes that the variable ``CURRENT_APP`` has been defined
@@ -205,19 +228,29 @@ CMD_MEDIA_SESSION_STATE = "dumpsys media_session | grep -A 100 'Sessions Stack' 
 CMD_CURRENT_APP_MEDIA_SESSION_STATE = CMD_CURRENT_APP + " && " + CMD_MEDIA_SESSION_STATE
 
 #: Determine the current app and get the state from ``dumpsys media_session`` for an Android 11 device
-CMD_CURRENT_APP_MEDIA_SESSION_STATE11 = CMD_CURRENT_APP11 + " && " + CMD_MEDIA_SESSION_STATE
+CMD_CURRENT_APP_MEDIA_SESSION_STATE11 = (
+    CMD_CURRENT_APP11 + " && " + CMD_MEDIA_SESSION_STATE
+)
 
 #: Determine the current app and get the state from ``dumpsys media_session`` for an Android 12 device
-CMD_CURRENT_APP_MEDIA_SESSION_STATE12 = CMD_CURRENT_APP12 + " && " + CMD_MEDIA_SESSION_STATE
+CMD_CURRENT_APP_MEDIA_SESSION_STATE12 = (
+    CMD_CURRENT_APP12 + " && " + CMD_MEDIA_SESSION_STATE
+)
 
 #: Determine the current app and get the state from ``dumpsys media_session`` for an Android 13 device
-CMD_CURRENT_APP_MEDIA_SESSION_STATE13 = CMD_CURRENT_APP13 + " && " + CMD_MEDIA_SESSION_STATE
+CMD_CURRENT_APP_MEDIA_SESSION_STATE13 = (
+    CMD_CURRENT_APP13 + " && " + CMD_MEDIA_SESSION_STATE
+)
 
 #: Determine the current app and get the state from ``dumpsys media_session`` for a Askey STI6130
-CMD_CURRENT_APP_MEDIA_SESSION_STATE_ASKEY_STI6130 = CMD_CURRENT_APP_ASKEY_STI6130 + " && " + CMD_MEDIA_SESSION_STATE
+CMD_CURRENT_APP_MEDIA_SESSION_STATE_ASKEY_STI6130 = (
+    CMD_CURRENT_APP_ASKEY_STI6130 + " && " + CMD_MEDIA_SESSION_STATE
+)
 
 #: Determine the current app and get the state from ``dumpsys media_session`` for a Google TV device
-CMD_CURRENT_APP_MEDIA_SESSION_STATE_GOOGLE_TV = CMD_CURRENT_APP_GOOGLE_TV + " && " + CMD_MEDIA_SESSION_STATE
+CMD_CURRENT_APP_MEDIA_SESSION_STATE_GOOGLE_TV = (
+    CMD_CURRENT_APP_GOOGLE_TV + " && " + CMD_MEDIA_SESSION_STATE
+)
 
 #: Get the running apps for an Android/Fire TV device
 CMD_RUNNING_APPS = "ps -A | grep u0_a"
@@ -248,7 +281,13 @@ CMD_WAKE_LOCK_SIZE = "dumpsys power | grep Locks | grep 'size='"
 
 #: Determine if the device is on, the screen is on, and get the wake lock size
 CMD_SCREEN_ON_AWAKE_WAKE_LOCK_SIZE = (
-    CMD_SCREEN_ON + CMD_SUCCESS1_FAILURE0 + " && " + CMD_AWAKE + CMD_SUCCESS1_FAILURE0 + " && " + CMD_WAKE_LOCK_SIZE
+    CMD_SCREEN_ON
+    + CMD_SUCCESS1_FAILURE0
+    + " && "
+    + CMD_AWAKE
+    + CMD_SUCCESS1_FAILURE0
+    + " && "
+    + CMD_WAKE_LOCK_SIZE
 )
 
 # `getprop` commands
@@ -264,7 +303,15 @@ CMD_MAC_ETH0 = "ip addr show eth0 | grep -m 1 ether"
 
 #: The command used for getting the device properties
 CMD_DEVICE_PROPERTIES = (
-    CMD_MANUFACTURER + " && " + CMD_MODEL + " && " + CMD_SERIALNO + " && " + CMD_VERSION + " && " + CMD_PRODUCT_ID
+    CMD_MANUFACTURER
+    + " && "
+    + CMD_MODEL
+    + " && "
+    + CMD_SERIALNO
+    + " && "
+    + CMD_VERSION
+    + " && "
+    + CMD_PRODUCT_ID
 )
 
 

@@ -34,8 +34,25 @@ class BaseAndroidTV(BaseTV):  # pylint: disable=too-few-public-methods
     DEVICE_CLASS = "androidtv"
     DEVICE_ENUM = constants.DeviceEnum.ANDROIDTV
 
-    def __init__(self, host, port=5555, adbkey="", adb_server_ip="", adb_server_port=5037, state_detection_rules=None):
-        BaseTV.__init__(self, None, host, port, adbkey, adb_server_ip, adb_server_port, state_detection_rules)
+    def __init__(
+        self,
+        host,
+        port=5555,
+        adbkey="",
+        adb_server_ip="",
+        adb_server_port=5037,
+        state_detection_rules=None,
+    ):
+        BaseTV.__init__(
+            self,
+            None,
+            host,
+            port,
+            adbkey,
+            adb_server_ip,
+            adb_server_port,
+            state_detection_rules,
+        )
 
     # ======================================================================= #
     #                                                                         #
@@ -129,7 +146,15 @@ class BaseAndroidTV(BaseTV):  # pylint: disable=too-few-public-methods
                 audio_state=audio_state,
             )
             if state:
-                return state, current_app, running_apps, audio_output_device, is_volume_muted, volume_level, hdmi_input
+                return (
+                    state,
+                    current_app,
+                    running_apps,
+                    audio_output_device,
+                    is_volume_muted,
+                    volume_level,
+                    hdmi_input,
+                )
 
             # ATV Launcher
             if current_app in [constants.APP_ATV_LAUNCHER, None]:
@@ -217,4 +242,12 @@ class BaseAndroidTV(BaseTV):  # pylint: disable=too-few-public-methods
                 else:
                     state = constants.STATE_IDLE
 
-        return state, current_app, running_apps, audio_output_device, is_volume_muted, volume_level, hdmi_input
+        return (
+            state,
+            current_app,
+            running_apps,
+            audio_output_device,
+            is_volume_muted,
+            volume_level,
+            hdmi_input,
+        )

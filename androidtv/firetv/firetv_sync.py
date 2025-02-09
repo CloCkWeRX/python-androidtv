@@ -43,7 +43,16 @@ class FireTVSync(BaseTVSync, BaseFireTV):
         state_detection_rules=None,
         signer=None,
     ):  # pylint: disable=super-init-not-called
-        BaseTVSync.__init__(self, host, port, adbkey, adb_server_ip, adb_server_port, state_detection_rules, signer)
+        BaseTVSync.__init__(
+            self,
+            host,
+            port,
+            adbkey,
+            adb_server_ip,
+            adb_server_port,
+            state_detection_rules,
+            signer,
+        )
 
     @classmethod
     def from_base(cls, base_tv):
@@ -114,7 +123,13 @@ class FireTVSync(BaseTVSync, BaseFireTV):
         ) = self.get_properties(get_running_apps=get_running_apps, lazy=lazy)
 
         return self._update(
-            screen_on, awake, wake_lock_size, current_app, media_session_state, running_apps, hdmi_input
+            screen_on,
+            awake,
+            wake_lock_size,
+            current_app,
+            media_session_state,
+            running_apps,
+            hdmi_input,
         )
 
     # ======================================================================= #
@@ -163,7 +178,15 @@ class FireTVSync(BaseTVSync, BaseFireTV):
 
         hdmi_input = self.get_hdmi_input()
 
-        return screen_on, awake, wake_lock_size, current_app, media_session_state, running_apps, hdmi_input
+        return (
+            screen_on,
+            awake,
+            wake_lock_size,
+            current_app,
+            media_session_state,
+            running_apps,
+            hdmi_input,
+        )
 
     def get_properties_dict(self, get_running_apps=True, lazy=True):
         """Get the properties needed for Home Assistant updates and return them as a dictionary.

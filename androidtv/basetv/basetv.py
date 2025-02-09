@@ -91,7 +91,11 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
         if self._state_detection_rules:
             for app_id, rules in self._state_detection_rules.items():
                 if not isinstance(app_id, str):
-                    raise TypeError("{0} is of type {1}, not str".format(app_id, type(app_id).__name__))
+                    raise TypeError(
+                        "{0} is of type {1}, not str".format(
+                            app_id, type(app_id).__name__
+                        )
+                    )
                 state_detection_rules_validator(rules)
 
         # the max volume level (determined when first getting the volume level)
@@ -135,12 +139,16 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
             return self._custom_commands[constants.CUSTOM_AUDIO_STATE]
 
         # Is this an Android 11-14 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") in [
-            "11",
-            "12",
-            "13",
-            "14",
-        ]:
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "")
+            in [
+                "11",
+                "12",
+                "13",
+                "14",
+            ]
+        ):
             return constants.CMD_AUDIO_STATE11
 
         return constants.CMD_AUDIO_STATE
@@ -174,18 +182,28 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
             return constants.CMD_CURRENT_APP_ASKEY_STI6130
 
         # Is this an Android 11 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") == "11":
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "") == "11"
+        ):
             return constants.CMD_CURRENT_APP11
 
         # Is this an Android 12 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") == "12":
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "") == "12"
+        ):
             return constants.CMD_CURRENT_APP12
 
         # Is this an Android 13/14 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") in [
-            "13",
-            "14",
-        ]:
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "")
+            in [
+                "13",
+                "14",
+            ]
+        ):
             return constants.CMD_CURRENT_APP13
 
         return constants.CMD_CURRENT_APP
@@ -200,7 +218,9 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
 
         """
         if constants.CUSTOM_CURRENT_APP_MEDIA_SESSION_STATE in self._custom_commands:
-            return self._custom_commands[constants.CUSTOM_CURRENT_APP_MEDIA_SESSION_STATE]
+            return self._custom_commands[
+                constants.CUSTOM_CURRENT_APP_MEDIA_SESSION_STATE
+            ]
 
         # Is this an Askey STI6130 Device?
         if (
@@ -219,18 +239,28 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
             return constants.CMD_CURRENT_APP_MEDIA_SESSION_STATE_GOOGLE_TV
 
         # Is this an Android 11 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") == "11":
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "") == "11"
+        ):
             return constants.CMD_CURRENT_APP_MEDIA_SESSION_STATE11
 
         # Is this an Android 12 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") == "12":
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "") == "12"
+        ):
             return constants.CMD_CURRENT_APP_MEDIA_SESSION_STATE12
 
         # Is this an Android 13/14 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") in [
-            "13",
-            "14",
-        ]:
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "")
+            in [
+                "13",
+                "14",
+            ]
+        ):
             return constants.CMD_CURRENT_APP_MEDIA_SESSION_STATE13
 
         return constants.CMD_CURRENT_APP_MEDIA_SESSION_STATE
@@ -248,12 +278,16 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
             return self._custom_commands[constants.CUSTOM_HDMI_INPUT]
 
         # Is this an Android 11-14 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") in [
-            "11",
-            "12",
-            "13",
-            "14",
-        ]:
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "")
+            in [
+                "11",
+                "12",
+                "13",
+                "14",
+            ]
+        ):
             return constants.CMD_HDMI_INPUT11
 
         return constants.CMD_HDMI_INPUT
@@ -273,12 +307,16 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
 
         """
         # Is this an Android 11-14 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") in [
-            "11",
-            "12",
-            "13",
-            "14",
-        ]:
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "")
+            in [
+                "11",
+                "12",
+                "13",
+                "14",
+            ]
+        ):
             return constants.CMD_VOLUME_SET_COMMAND11.format(new_volume)
 
         return constants.CMD_VOLUME_SET_COMMAND.format(new_volume)
@@ -312,18 +350,28 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
             return constants.CMD_LAUNCH_APP_FIRETV.format(app)
 
         # Is this an Android 11 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") == "11":
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "") == "11"
+        ):
             return constants.CMD_LAUNCH_APP11.format(app)
 
         # Is this an Android 12 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") == "12":
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "") == "12"
+        ):
             return constants.CMD_LAUNCH_APP12.format(app)
 
         # Is this an Android 13-14 device?
-        if self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV and self.device_properties.get("sw_version", "") in [
-            "13",
-            "14",
-        ]:
+        if (
+            self.DEVICE_ENUM == constants.DeviceEnum.ANDROIDTV
+            and self.device_properties.get("sw_version", "")
+            in [
+                "13",
+                "14",
+            ]
+        ):
             return constants.CMD_LAUNCH_APP13.format(app)
 
         return constants.CMD_LAUNCH_APP.format(app)
@@ -517,7 +565,11 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
             The state, if it could be determined using the rules in ``self._state_detection_rules``; otherwise, ``None``
 
         """
-        if not self._state_detection_rules or current_app is None or current_app not in self._state_detection_rules:
+        if (
+            not self._state_detection_rules
+            or current_app is None
+            or current_app not in self._state_detection_rules
+        ):
             return None
 
         rules = self._state_detection_rules[current_app]
@@ -551,7 +603,9 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
         return None
 
     @staticmethod
-    def _conditions_are_true(conditions, media_session_state=None, wake_lock_size=None, audio_state=None):
+    def _conditions_are_true(
+        conditions, media_session_state=None, wake_lock_size=None, audio_state=None
+    ):
         """Check whether the conditions in ``conditions`` are true.
 
         Parameters
@@ -613,7 +667,9 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
         if not stream_music:
             return None
 
-        matches = re.findall(constants.DEVICE_REGEX_PATTERN, stream_music, re.DOTALL | re.MULTILINE)
+        matches = re.findall(
+            constants.DEVICE_REGEX_PATTERN, stream_music, re.DOTALL | re.MULTILINE
+        )
         if matches:
             return matches[0]
 
@@ -657,12 +713,18 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
             The current app, or ``None`` if it could not be determined
 
         """
-        if not current_app_response or "=" in current_app_response or "{" in current_app_response:
+        if (
+            not current_app_response
+            or "=" in current_app_response
+            or "{" in current_app_response
+        ):
             return None
 
         return current_app_response
 
-    def _current_app_media_session_state(self, current_app_media_session_state_response):
+    def _current_app_media_session_state(
+        self, current_app_media_session_state_response
+    ):
         """Get the current app and the media session state properties from the output of `androidtv.basetv.basetv.BaseTV._cmd_current_app_media_session_state`.
 
         Parameters
@@ -686,7 +748,9 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
         current_app = self._current_app(lines[0].strip())
 
         if len(lines) > 1:
-            matches = constants.REGEX_MEDIA_SESSION_STATE.search(current_app_media_session_state_response)
+            matches = constants.REGEX_MEDIA_SESSION_STATE.search(
+                current_app_media_session_state_response
+            )
             if matches:
                 return current_app, int(matches.group("state"))
 
@@ -707,7 +771,9 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
             The HDMI input, or ``None`` if it could not be determined
 
         """
-        return hdmi_response.strip() if hdmi_response and hdmi_response.strip() else None
+        return (
+            hdmi_response.strip() if hdmi_response and hdmi_response.strip() else None
+        )
 
     @staticmethod
     def _get_installed_apps(installed_apps_response):
@@ -726,7 +792,9 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
         """
         if installed_apps_response is not None:
             return [
-                line.strip().rsplit("package:", 1)[-1] for line in installed_apps_response.splitlines() if line.strip()
+                line.strip().rsplit("package:", 1)[-1]
+                for line in installed_apps_response.splitlines()
+                if line.strip()
             ]
 
         return None
@@ -749,7 +817,9 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
         if not stream_music:
             return None
 
-        matches = re.findall(constants.MUTED_REGEX_PATTERN, stream_music, re.DOTALL | re.MULTILINE)
+        matches = re.findall(
+            constants.MUTED_REGEX_PATTERN, stream_music, re.DOTALL | re.MULTILINE
+        )
         if matches:
             return matches[0] == "true"
 
@@ -799,7 +869,11 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
 
         """
         if running_apps_response:
-            return [line.strip().rsplit(" ", 1)[-1] for line in running_apps_response.splitlines() if line.strip()]
+            return [
+                line.strip().rsplit(" ", 1)[-1]
+                for line in running_apps_response.splitlines()
+                if line.strip()
+            ]
 
         return None
 
@@ -910,7 +984,9 @@ class BaseTV(object):  # pylint: disable=too-few-public-methods
 
         """
         if wake_lock_size_response:
-            wake_lock_size_matches = constants.REGEX_WAKE_LOCK_SIZE.search(wake_lock_size_response)
+            wake_lock_size_matches = constants.REGEX_WAKE_LOCK_SIZE.search(
+                wake_lock_size_response
+            )
             if wake_lock_size_matches:
                 return int(wake_lock_size_matches.group("size"))
 
@@ -993,7 +1069,11 @@ def state_detection_rules_validator(rules, exc=KeyError):
             for state, conditions in rule.items():
                 # The keys of the dictionary must be valid states
                 if state not in constants.VALID_STATES:
-                    raise exc("'{0}' is not a valid state for the 'state_detection_rules' parameter".format(state))
+                    raise exc(
+                        "'{0}' is not a valid state for the 'state_detection_rules' parameter".format(
+                            state
+                        )
+                    )
 
                 # The values of the dictionary must be dictionaries
                 if not isinstance(conditions, dict):
@@ -1006,7 +1086,11 @@ def state_detection_rules_validator(rules, exc=KeyError):
                 for prop, value in conditions.items():
                     # The keys of the dictionary must be valid properties that can be checked
                     if prop not in constants.VALID_PROPERTIES:
-                        raise exc("Invalid property '{0}' is not in {1}".format(prop, constants.VALID_PROPERTIES))
+                        raise exc(
+                            "Invalid property '{0}' is not in {1}".format(
+                                prop, constants.VALID_PROPERTIES
+                            )
+                        )
 
                     # Make sure the value is of the right type
                     if not isinstance(value, constants.VALID_PROPERTIES_TYPES[prop]):

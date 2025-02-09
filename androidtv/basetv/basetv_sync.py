@@ -84,7 +84,16 @@ class BaseTVSync(BaseTV):
             # pure-python-adb
             adb = ADBServerSync(host, port, adb_server_ip, adb_server_port)
 
-        BaseTV.__init__(self, adb, host, port, adbkey, adb_server_ip, adb_server_port, state_detection_rules)
+        BaseTV.__init__(
+            self,
+            adb,
+            host,
+            port,
+            adbkey,
+            adb_server_ip,
+            adb_server_port,
+            state_detection_rules,
+        )
 
     # ======================================================================= #
     #                                                                         #
@@ -256,7 +265,10 @@ class BaseTVSync(BaseTV):
             Whether or not the device is awake (screensaver is not running)
 
         """
-        return self._adb.shell(constants.CMD_AWAKE + constants.CMD_SUCCESS1_FAILURE0) == "1"
+        return (
+            self._adb.shell(constants.CMD_AWAKE + constants.CMD_SUCCESS1_FAILURE0)
+            == "1"
+        )
 
     def current_app(self):
         """Return the current app.
@@ -282,7 +294,9 @@ class BaseTVSync(BaseTV):
             The state from the output of the ADB shell command ``dumpsys media_session``, or ``None`` if it could not be determined
 
         """
-        media_session_state_response = self._adb.shell(self._cmd_current_app_media_session_state())
+        media_session_state_response = self._adb.shell(
+            self._cmd_current_app_media_session_state()
+        )
 
         return self._current_app_media_session_state(media_session_state_response)
 
@@ -359,7 +373,10 @@ class BaseTVSync(BaseTV):
             Whether or not the device is on
 
         """
-        return self._adb.shell(constants.CMD_SCREEN_ON + constants.CMD_SUCCESS1_FAILURE0) == "1"
+        return (
+            self._adb.shell(constants.CMD_SCREEN_ON + constants.CMD_SUCCESS1_FAILURE0)
+            == "1"
+        )
 
     def screen_on_awake_wake_lock_size(self):
         """Check if the screen is on and the device is awake, and get the wake lock size.
@@ -379,7 +396,11 @@ class BaseTVSync(BaseTV):
         # Power service might sometimes reply with "Failed to write while dumping service". If this happens,
         # retry the request, up to three times.
         retries_left = 3
-        while output is not None and "Failed to write while dumping service" in output and retries_left > 0:
+        while (
+            output is not None
+            and "Failed to write while dumping service" in output
+            and retries_left > 0
+        ):
             output = self._adb.shell(constants.CMD_SCREEN_ON_AWAKE_WAKE_LOCK_SIZE)
             retries_left -= 1
 
@@ -827,7 +848,9 @@ class BaseTVSync(BaseTV):
             if not self.max_volume:
                 return None
 
-        new_volume = int(min(max(round(self.max_volume * volume_level), 0.0), self.max_volume))
+        new_volume = int(
+            min(max(round(self.max_volume * volume_level), 0.0), self.max_volume)
+        )
 
         self._adb.shell(self._cmd_volume_set(new_volume))
 
@@ -923,5 +946,9 @@ class BaseTVSync(BaseTV):
         )
 
         return " && ".join(
-            [self._parse_getevent_line(line) for line in getevent.splitlines() if line.startswith("/") and ":" in line]
+            [
+                self._parse_getevent_line(line)
+                for line in getevent.splitlines()
+                if line.startswith("/") and ":" in line
+            ]
         )

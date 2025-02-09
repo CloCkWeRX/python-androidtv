@@ -34,15 +34,41 @@ class BaseFireTV(BaseTV):  # pylint: disable=too-few-public-methods
     DEVICE_CLASS = "firetv"
     DEVICE_ENUM = constants.DeviceEnum.FIRETV
 
-    def __init__(self, host, port=5555, adbkey="", adb_server_ip="", adb_server_port=5037, state_detection_rules=None):
-        BaseTV.__init__(self, None, host, port, adbkey, adb_server_ip, adb_server_port, state_detection_rules)
+    def __init__(
+        self,
+        host,
+        port=5555,
+        adbkey="",
+        adb_server_ip="",
+        adb_server_port=5037,
+        state_detection_rules=None,
+    ):
+        BaseTV.__init__(
+            self,
+            None,
+            host,
+            port,
+            adbkey,
+            adb_server_ip,
+            adb_server_port,
+            state_detection_rules,
+        )
 
     # ======================================================================= #
     #                                                                         #
     #                          Home Assistant Update                          #
     #                                                                         #
     # ======================================================================= #
-    def _update(self, screen_on, awake, wake_lock_size, current_app, media_session_state, running_apps, hdmi_input):
+    def _update(
+        self,
+        screen_on,
+        awake,
+        wake_lock_size,
+        current_app,
+        media_session_state,
+        running_apps,
+        hdmi_input,
+    ):
         """Get the info needed for a Home Assistant update.
 
         Parameters
@@ -99,13 +125,19 @@ class BaseFireTV(BaseTV):  # pylint: disable=too-few-public-methods
 
             # Determine the state using custom rules
             state = self._custom_state_detection(
-                current_app=current_app, media_session_state=media_session_state, wake_lock_size=wake_lock_size
+                current_app=current_app,
+                media_session_state=media_session_state,
+                wake_lock_size=wake_lock_size,
             )
             if state:
                 return state, current_app, running_apps, hdmi_input
 
             # Determine the state based on the `current_app`
-            if current_app in [constants.APP_FIRETV_PACKAGE_LAUNCHER, constants.APP_FIRETV_PACKAGE_SETTINGS, None]:
+            if current_app in [
+                constants.APP_FIRETV_PACKAGE_LAUNCHER,
+                constants.APP_FIRETV_PACKAGE_SETTINGS,
+                None,
+            ]:
                 state = constants.STATE_IDLE
 
             # Amazon Video

@@ -43,7 +43,16 @@ class AndroidTVSync(BaseTVSync, BaseAndroidTV):
         state_detection_rules=None,
         signer=None,
     ):  # pylint: disable=super-init-not-called
-        BaseTVSync.__init__(self, host, port, adbkey, adb_server_ip, adb_server_port, state_detection_rules, signer)
+        BaseTVSync.__init__(
+            self,
+            host,
+            port,
+            adbkey,
+            adb_server_ip,
+            adb_server_port,
+            state_detection_rules,
+            signer,
+        )
 
     @classmethod
     def from_base(cls, base_tv):
@@ -181,7 +190,19 @@ class AndroidTVSync(BaseTVSync, BaseAndroidTV):
         screen_on, awake, wake_lock_size = self.screen_on_awake_wake_lock_size()
 
         if lazy and not (screen_on and awake):
-            return screen_on, awake, None, wake_lock_size, None, None, None, None, None, None, None
+            return (
+                screen_on,
+                awake,
+                None,
+                wake_lock_size,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+            )
 
         audio_state = self.audio_state()
         current_app, media_session_state = self.current_app_media_session_state()
