@@ -18,7 +18,7 @@ setup(
     packages=["androidtv", "androidtv.adb_manager", "androidtv.basetv", "androidtv.androidtv", "androidtv.firetv"],
     install_requires=[
         "adb-shell>=0.4.0",
-        "pure-python-adb @ git+https://github.com/CloCkWeRX/pure-python-adb@v0.3.0.pre"  # TODO: Change to https://github.com/spm5065/pure-python-adb when a tag is available
+        "pure-python-adb @ git+https://github.com/CloCkWeRX/pure-python-adb@v0.3.0.pre",  # TODO: Change to https://github.com/spm5065/pure-python-adb when a tag is available
     ],
     extras_require={"async": ["aiofiles>=0.4.0", "async_timeout>=3.0.0"], "usb": ["adb-shell[usb]>=0.4.0"]},
     classifiers=[
